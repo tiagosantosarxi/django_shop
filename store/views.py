@@ -1,5 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Product, Category
+from carts.models import CartItem
+from carts.views import _cart_id
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+
+PRODUCTS_PER_PAGE = 12
 
 
 def store(request, category_slug=None):
@@ -8,12 +13,15 @@ def store(request, category_slug=None):
 
     if category_slug:
         categories = get_object_or_404(Category, slug=category_slug)
-        products = Product.objects.filter(category=categories, is_available=True)
+        products = Product.objects.filter(category=categories, is_available=True).order_by('id')
     else:
-        products = Product.objects.all().filter(is_available=True)
+        products = Product.objects.all().filter(is_available=True).order_by('id')
+    paginator = Paginator(products, PRODUCTS_PER_PAGE)
+    page = request.GET.get('page')
+    page_products = paginator.get_page(page)
     product_count = products.count()
     context = {
-        'products'     : products,
+        'products'     : page_products,
         'product_count': product_count
     }
 
@@ -27,7 +35,9 @@ def product_detail(request, category_slug, product_slug):
         raise e
     if not product:
         product = get_object_or_404(Product, slug=product_slug)
+    in_cart = CartItem.objects.filter(cart__cart_id=_cart_id(request), product=product).exists()
     context = {
         'product': product,
+        'in_cart': in_cart
     }
     return render(request, 'store/product_detail.html', context)
