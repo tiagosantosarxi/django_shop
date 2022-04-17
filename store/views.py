@@ -1,8 +1,10 @@
+from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
-from .models import Product, Category
+
 from carts.models import CartItem
 from carts.views import _cart_id
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from .models import Product, Category
 
 PRODUCTS_PER_PAGE = 12
 
@@ -41,3 +43,20 @@ def product_detail(request, category_slug, product_slug):
         'in_cart': in_cart
     }
     return render(request, 'store/product_detail.html', context)
+
+
+def search(request):
+    context = {
+        'product_count': 0
+    }
+    keyword = request.GET.get('keyword')
+    if keyword:
+        products = Product.objects.order_by('-created_date').filter(
+            Q(description__icontains=keyword) | Q(product_name__icontains=keyword))
+        product_count = products.count()
+        context.update({
+            'products'     : products,
+            'product_count': product_count
+        })
+
+    return render(request, 'store/store.html', context)

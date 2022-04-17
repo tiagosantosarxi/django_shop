@@ -2,11 +2,14 @@
 
 {% block content %}
 
-
     <!-- ========================= SECTION PAGETOP ========================= -->
     <section class="section-pagetop bg">
         <div class="container">
-            <h2 class="title-page">Our Store</h2>
+            {% if 'search' in request.path %}
+                <h2 class="title-page">Search Result</h2>
+            {% else %}
+                <h2 class="title-page">Our Store</h2>
+            {% endif %}
 
         </div> <!-- container //  -->
     </section>
@@ -129,32 +132,39 @@
                     </header><!-- sect-heading -->
 
                     <div class="row">
-                        {% for product in products %}
-                            <div class="col-md-4">
-                                <figure class="card card-product-grid">
-                                    <div class="img-wrap">
-                                        <a href="{{ product.get_url }}">
-                                            <img alt="{{ product.slug }}" src="{{ product.images.url }}"/>
-                                        </a>
-                                    </div> <!-- img-wrap.// -->
-                                    <figcaption class="info-wrap">
-                                        <div class="fix-height">
-                                            <a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
-                                            <div class="price-wrap mt-2">
-                                                <span class="price">{{ product.price }}</span>
-                                            </div> <!-- price-wrap.// -->
-                                        </div>
-                                        {% if product.stock <= 0 %}
-                                            <span class="text text-danger">Out of Stock <i
-                                                    class="fas fa-window-close"></i></span>
-                                        {% else %}
-                                            <a href="{% url 'add_to_cart' product.id %}"
-                                               class="btn btn-block btn-success">Add to cart </a>
-                                        {% endif %}
-                                    </figcaption>
-                                </figure>
-                            </div> <!-- col.// -->
-                        {% endfor %}
+                        {% if products %}
+                            {% for product in products %}
+                                <div class="col-md-4">
+                                    <figure class="card card-product-grid">
+                                        <div class="img-wrap">
+                                            <a href="{{ product.get_url }}">
+                                                <img alt="{{ product.slug }}" src="{{ product.images.url }}"/>
+                                            </a>
+                                        </div> <!-- img-wrap.// -->
+                                        <figcaption class="info-wrap">
+                                            <div class="fix-height">
+                                                <a href="{{ product.get_url }}"
+                                                   class="title">{{ product.product_name }}</a>
+                                                <div class="price-wrap mt-2">
+                                                    <span class="price">{{ product.price }}</span>
+                                                </div> <!-- price-wrap.// -->
+                                            </div>
+                                            {% if product.stock <= 0 %}
+                                                <span class="text text-danger">Out of Stock <i
+                                                        class="fas fa-window-close"></i></span>
+                                            {% else %}
+                                                <a href="{% url 'add_to_cart' product.id %}"
+                                                   class="btn btn-block btn-success">Add to cart </a>
+                                            {% endif %}
+                                        </figcaption>
+                                    </figure>
+                                </div> <!-- col.// -->
+                            {% endfor %}
+                        {% else %}
+                            <div>
+                                <h2>No Result Found. Please try again.</h2>
+                            </div>
+                        {% endif %}
                     </div> <!-- row end.// -->
 
 
@@ -173,7 +183,8 @@
 
                                 {% for i in products.paginator.page_range %}
                                     {% if products.number == i %}
-                                        <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                        <li class="page-item active"><a class="page-link"
+                                                                        href="?page={{ i }}">{{ i }}</a></li>
                                     {% else %}
                                         <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
                                     {% endif %}

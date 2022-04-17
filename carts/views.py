@@ -55,6 +55,8 @@ def remove_cart_item(request, product_id):
 
 
 def cart(request, sub_total=0, tax=0, quantity=0, cart_items=None):
+    color = request.GET.get('color')
+    size = request.GET.get('size')
     try:
         cart = Cart.objects.get(cart_id=_cart_id(request))
         cart_items = CartItem.objects.filter(cart=cart, is_active=True)
