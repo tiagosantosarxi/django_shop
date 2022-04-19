@@ -153,8 +153,13 @@
                                                 <span class="text text-danger">Out of Stock <i
                                                         class="fas fa-window-close"></i></span>
                                             {% else %}
-                                                <a href="{% url 'add_to_cart' product.id %}"
-                                                   class="btn btn-block btn-success">Add to cart </a>
+                                                {% if not product.variant_set.all %}
+                                                    <a href="{% url 'add_to_cart' product.id %}"
+                                                       class="btn btn-block btn-success">Add to cart </a>
+                                                {% else %}
+                                                    <a href="{{ product.get_url }}"
+                                                       class="btn btn-block btn-info">View Variants </a>
+                                                {% endif %}
                                             {% endif %}
                                         </figcaption>
                                     </figure>

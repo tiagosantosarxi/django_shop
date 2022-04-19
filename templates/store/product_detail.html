@@ -31,34 +31,38 @@
 
                                 <p>{{ product.description }}</p>
 
-                                <hr>
-                                <div class="row">
-                                    <div class="item-option-select">
-                                        <h6>Choose Color</h6>
-                                        <label>
-                                            <select name="color" class="form-control" required>
-                                                <option value="" disabled selected>Choose Color</option>
-                                                {% for variant in product.variant_set.colors %}
-                                                    <option value="{{ variant.variant_value }}">{{ variant.variant_value }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </label>
-                                    </div>
-                                </div> <!-- row.// -->
-                                <div class="row">
-                                    <div class="item-option-select">
-                                        <h6>Select Size</h6>
-                                        <label>
-                                            <select name="size" class="form-control" required>
-                                                <option value="" disabled selected>Choose Size</option>
-                                                {% for variant in product.variant_set.sizes %}
-                                                    <option value="{{ variant.variant_value | lower }}">{{ variant.variant_value | capfirst }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </label>
-                                    </div>
-                                </div> <!-- row.// -->
-                                <hr>
+                                {% if product.variant_set.colors %}
+                                    <hr>
+                                    <div class="row">
+                                        <div class="item-option-select">
+                                            <h6>Choose Color</h6>
+                                            <label>
+                                                <select name="color" class="form-control" required>
+                                                    <option value="" disabled selected>Choose Color</option>
+                                                    {% for variant in product.variant_set.colors %}
+                                                        <option value="{{ variant.variant_value }}">{{ variant.variant_value }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </label>
+                                        </div>
+                                    </div> <!-- row.// -->
+                                {% endif %}
+                                {% if product.variant_set.sizes %}
+                                    <div class="row">
+                                        <div class="item-option-select">
+                                            <h6>Select Size</h6>
+                                            <label>
+                                                <select name="size" class="form-control" required>
+                                                    <option value="" disabled selected>Choose Size</option>
+                                                    {% for variant in product.variant_set.sizes %}
+                                                        <option value="{{ variant.variant_value | lower }}">{{ variant.variant_value | capfirst }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </label>
+                                        </div>
+                                    </div> <!-- row.// -->
+                                    <hr>
+                                {% endif %}
                                 {% if product.stock <= 0 %}
                                     <h5 class="text-danger">Out of Stock</h5>
                                 {% else %}
